@@ -1,6 +1,11 @@
 const User = require('../models/User')
 
 module.exports = {
+  async show(req, res) {
+    const users = await User.findById(req.params.userId)
+    return res.json(users)
+  },
+
   async index(req, res) {
     const users = await User.find({})
 
@@ -37,6 +42,22 @@ module.exports = {
     }
     
     const request = await User.deleteOne({ _id: userId })
+
+    return res.json(request)
+
+  },
+
+  async update(req, res) {
+    const { userId } = req.params;
+    const { body } = req
+
+    const userExists = await User.findOne({ _id: userId});
+
+    if(!userExists) {
+      return res.json({ message: "Usuário nao existe!"});
+    }
+    
+    const request = await User.findByIdAndUpdate(userId, body, {new: true})
 
     return res.json(request)
 
